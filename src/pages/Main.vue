@@ -3,24 +3,26 @@
     <div class="m-auto">
       <h1 class="text-3xl text-center">Url Shortening Service</h1>
       <form>
-        <input
-          v-model="url"
-          type="url"
-          name="url"
-          class="border rounded my-8 py-2"
-          placeholder="Enter url to shorten"
-          @input="change()"
-          @change="change()"
-        />
-        <button
-          v-on:click.prevent="onSubmit"
-          type="submit"
-          class="border rounded bg-gradient-to-r from-red-700 to-pink-700 text-white items-center py-2 ml-2 px-2"
-        >
-          Submit
-        </button>
+        <div class="text-center my-8">
+          <input
+            v-model="url"
+            type="url"
+            name="url"
+            class="border rounded py-2 my-2"
+            placeholder="Enter url to shorten"
+            @input="change()"
+            @change="change()"
+          />
+          <button
+            v-on:click.prevent="onSubmit"
+            type="submit"
+            class="border rounded bg-gradient-to-r from-red-700 to-pink-700 text-white items-center py-2 ml-2 px-2"
+          >
+            Submit
+          </button>
+        </div>
         <h2 v-if="!isValid" v-bind:style="{ display: showError, marginTop: '20px' }">
-          Invalid URL Entered
+          Invalid URL Entered, URL should start with http/https
         </h2>
         <div v-if="processing" class="text-center">
           <div class="spinner-border" role="status">
@@ -28,10 +30,23 @@
           </div>
         </div>
         <h3 v-if="shorted">
-          Your Shorten Url:
-          <a :href="`https://s-urls.herokuapp.com/${shortenurl}`" target="_blank"
-            >s-urls.herokuapp.com/{{ shortenurl }}</a
-          >
+          <div>
+            <button
+              type="button"
+              class="border rounded bg-gradient-to-r from-gray-800 to-green-700 text-white items-center py-2 px-2 mr-2 text-lg"
+              style="pointer-events:none"
+            >
+              Your Shorten Url :
+            </button>
+            <a
+              :href="`https://s-urls.herokuapp.com/${shortenurl}`"
+              style="text-decoration:underline"
+              class="text-xl"
+              target="_blank"
+              ><pre style="display:inline;">s-urls.herokuapp.com/</pre>
+              {{ shortenurl }}</a
+            >
+          </div>
         </h3>
       </form>
     </div>
@@ -57,10 +72,12 @@ export default {
     onSubmit() {
       if (!this.isValid) {
         console.log("false");
+        this.shorted = false;
         this.showError = "block";
         return;
       }
       this.showError = "none";
+      this.shorted = false;
       this.processing = true;
       this.axios
         .post("https://s-urls.herokuapp.com/?fullurl=" + this.url)
@@ -93,4 +110,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+input {
+  caret-color: green;
+}
+</style>
